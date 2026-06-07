@@ -1,0 +1,106 @@
+KALI LIVE PERSISTENT USB - FILE PLACEMENT INSTRUCTIONS
+======================================================
+
+Your USB stick, when inserted in Windows, usually appears as drive D: (you said D:).
+
+This is the FAT32 "live" partition that contains the Kali ISO files, isolinux, etc.
+The actual persistence data lives on a separate ext4 partition that Windows cannot
+easily see (it may show as "persistence" or be unlettered).
+
+STEP-BY-STEP (easiest way)
+
+1. On Windows
+   - Plug in your Kali Live + Persistent USB.
+   - Open D: in Explorer.
+   - Create a folder:   D:\kali-msn-agent
+   - Copy EVERYTHING from this project (the folder you downloaded) into D:\kali-msn-agent
+     You should end up with:
+       D:\kali-msn-agent\main.py
+       D:\kali-msn-agent\agent_core.py
+       D:\kali-msn-agent\msn_ui.py
+       D:\kali-msn-agent\README.md
+       D:\kali-msn-agent\startup\persist-setup.sh
+       D:\kali-msn-agent\startup\kali-msn-agent.desktop
+       etc.
+
+   (Optional) You can also drop a copy of the .desktop file at the root of D: for visibility:
+       D:\kali-msn-agent.desktop   (the one in startup/)
+
+2. Boot the USB
+   - Choose the "Live (persistence)" or "Live USB Persistence" entry from the boot menu.
+   - Log in (default kali / kali on most recent builds).
+
+3. One-time setup (run this in a terminal after desktop loads)
+   Open a terminal and:
+
+   cd /media/kali/*-*/kali-msn-agent     # the exact label varies (KALI, LIVE, etc.)
+   # or if you already copied it into the persistent layer before:
+   # cd ~/kali-msn-agent
+
+   chmod +x startup/persist-setup.sh
+   ./startup/persist-setup.sh
+
+   This will:
+   - Install python3-tk + python3-requests + xterm (if missing)
+   - Copy the agent into ~/kali-msn-agent  (this lives on the persistence partition)
+   - Create ~/.config/autostart/kali-msn-agent.desktop  <-- auto launch on login
+   - Put a clickable launcher on your Desktop
+
+4. Reboot (or just log out and log back in)
+   The retro MSN window titled "Kali MSN - Agent Messenger" should appear automatically.
+
+   If it doesn't:
+   - Double-click the "Kali MSN Agent" icon on the Desktop, or
+   - Run in terminal:   python3 ~/kali-msn-agent/main.py
+
+5. Using it
+   - In the main contact list window, tick the big red checkbox:
+     "ENABLE FULL CONTROL (root shell access)"
+   - Double-click the "Jarvis" contact to open the chat window.
+   - Talk to it in English. It will drive aircrack-ng, nmap, custom plans etc.
+   - Every command it runs and the output appears live in the chat.
+
+"Clicked from the boot menu" note
+---------------------------------
+True custom boot menu entries require editing the bootloader config on the USB
+(isolinux.cfg / grub.cfg) and usually remastering or using a tool like Rufus with
+extra options + a custom initrd hook. 
+
+For 99% of use cases the autostart .desktop + persist-setup.sh above is what you want:
+once the normal persistent desktop boots, the agent messenger starts.
+
+If you really want a dedicated boot label that auto-starts the agent in a special
+session, the practical way is:
+- Use "persistence" + put a script in /lib/live/config/ or similar that launches
+  the GUI after lightdm/X, or
+- Create a new "Kali Live + Agent" entry that sources a custom script.
+
+The files here give you the cleanest, most maintainable version without breaking
+your USB on every Kali update.
+
+Manual placement if you hate the script
+---------------------------------------
+After booting into persistent:
+
+mkdir -p ~/.config/autostart ~/Desktop ~/kali-msn-agent
+cp -a /media/.../kali-msn-agent/* ~/kali-msn-agent/
+cp ~/kali-msn-agent/startup/kali-msn-agent.desktop ~/.config/autostart/
+cp ~/kali-msn-agent/startup/kali-msn-agent.desktop ~/Desktop/
+chmod +x ~/Desktop/Kali-MSN-Agent.desktop
+
+Then just run it.
+
+D: drive gotcha
+---------------
+On some USB creators the main partition label is not "D:". It might be E:, F: or
+"KALI_LIVE". Just look for the drive that contains "live" and "isolinux" folders.
+
+Persistence must be enabled in the boot menu for ~/ to survive reboots.
+
+Legal / Safety
+--------------
+This agent can (and will, if you let it) run destructive or illegal commands.
+Only use on hardware/networks you own or have explicit written authorization for.
+The jarvis model prompt already contains strong warnings — pay attention to them.
+
+Enjoy the nostalgia + the power.
