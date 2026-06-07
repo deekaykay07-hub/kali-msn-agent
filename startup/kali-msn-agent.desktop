@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Kali MSN Agent
+Comment=Retro MSN Messenger - Jarvis Kali Agent with full OS control
+Exec=/usr/bin/python3 /home/kali/kali-msn-agent/main.py
+Icon=utilities-terminal
+Terminal=false
+Categories=Network;Security;Pentesting;
+X-GNOME-Autostart-enabled=true
+StartupNotify=false
+NoDisplay=false
